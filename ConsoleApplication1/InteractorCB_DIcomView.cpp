@@ -350,7 +350,7 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 
 	// Scalar 데이터의 Min, Max 를 구한다.
 	double *fMinMax = pData->GetPointData()->GetScalars()->GetRange();
-
+	//double *fMinMax = pData->GetScalarRange();
 	mapper->SetBlendModeToComposite();
 
 	// Volume 의 속성 설정
@@ -364,13 +364,20 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 
 	double fTerm = fMinMax[1] - fMinMax[0];
 
-	double c1_pos = 0.5;
+	double c1_pos = 0.4;
 
 	// OTF 설정
 	C_VTK(vtkPiecewiseFunction, OTF1);
-	OTF1->AddPoint(fMinMax[0], 0.0); // start	
+	/*OTF1->AddPoint(fMinMax[0], 0.0); // start	
 	OTF1->AddPoint(fMinMax[0] + fTerm * c1_pos, 0.0);
-	OTF1->AddPoint(fMinMax[1], 0.4); // end
+	OTF1->AddPoint(fMinMax[1], 0.4); // end*/
+
+	OTF1->AddPoint(fMinMax[0], 0);
+	printf("fMin=%lf\n", fMinMax[0]);
+	OTF1->AddPoint(408.166,0);
+	OTF1->AddPoint(408.166,1);	
+	OTF1->AddPoint(fMinMax[1], 1);
+	printf("fMax=%lf\n", fMinMax[1]);
 	volProperty->SetScalarOpacity(0, OTF1);
 
 	const int nCountItem_CTF = 4;
@@ -383,7 +390,7 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 
 	double col[nCountItem_CTF][3] =
 	{
-		{ 0.0, 0.0, 0.0 },{ 0.7, 0.4, 0.1 },
+		{ 0.0, 0.0, 0.0 },{ 0.6, 0.4, 0.1 },
 		{ 0.6, 0.5, 0.3 },{ 1.0, 1.0, 1.0 }
 	};
 
@@ -396,6 +403,7 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 	volume->SetProperty(volProperty);
 
 	volume->SetUserMatrix(pMat);
+
 
 	pRenderer->AddVolume(volume);
 }

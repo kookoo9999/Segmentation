@@ -5,10 +5,18 @@
 #include "DataModel.h"
 #include "InteractorCB_DIcomView.h"
 
+
+//#define TRACE( _x, args) printf("[%s:%d]\t"_x"\n", __FILE__, __LINE__, ##args)
+#define TR(s){CString str;str.Format(L"%s", _T(s));OutputDebugString(str);}
+
+
+
+
+
 int main(int argc, char* argv[])
 {
 	if (argc < 2) return -1;
-
+	
 	vtkObject::GlobalWarningDisplayOff();
 
 	VTK_MODULE_INIT(vtkRenderingOpenGL2);
@@ -74,6 +82,7 @@ int main(int argc, char* argv[])
 			auto pOrigin = data_model.GetImage()->GetOrigin();
 
 			double vector1[3] = { orient[0], orient[1], orient[2] };
+			
 			double vector2[3] = { orient[3], orient[4], orient[5] };
 			double vector3[3] = { 0, };
 
