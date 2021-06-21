@@ -349,8 +349,8 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 	volume->SetMapper(mapper);
 
 	// Scalar 데이터의 Min, Max 를 구한다.
-	double *fMinMax = pData->GetPointData()->GetScalars()->GetRange();
-	//double *fMinMax = pData->GetScalarRange();
+	//double *fMinMax = pData->GetPointData()->GetScalars()->GetRange();
+	double *fMinMax = pData->GetScalarRange();
 	mapper->SetBlendModeToComposite();
 
 	// Volume 의 속성 설정
@@ -368,16 +368,29 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 
 	// OTF 설정
 	C_VTK(vtkPiecewiseFunction, OTF1);
-	/*OTF1->AddPoint(fMinMax[0], 0.0); // start	
-	OTF1->AddPoint(fMinMax[0] + fTerm * c1_pos, 0.0);
+	printf("fMin=%lf\n", fMinMax[0]);
+	printf("fMax=%lf\n", fMinMax[1]);
+	printf("First point = %lf\n", fMinMax[0] + fTerm * c1_pos);  
+	OTF1->AddPoint(fMinMax[0], 0.0); // start	
+	OTF1->AddPoint(335.434, 0);
+	OTF1->AddPoint(850.220, 0.1);
+	OTF1->AddPoint(1536.603, 0.356);
+	OTF1->AddPoint(1536.603, 0);
+	OTF1->AddPoint(2852.169, 0.581);
+	OTF1->AddPoint(3938.941, 0);
+	OTF1->AddPoint(7199.257, 0);
+	OTF1->AddPoint(7199.257, 1);
+	//OTF1->AddPoint(315.449, 0);
 	OTF1->AddPoint(fMinMax[1], 0.4); // end*/
 
-	OTF1->AddPoint(fMinMax[0], 0);
-	printf("fMin=%lf\n", fMinMax[0]);
+	
+	
+	/*OTF1->AddPoint(fMinMax[0], 0);
+	
 	OTF1->AddPoint(408.166,0);
 	OTF1->AddPoint(408.166,1);	
-	OTF1->AddPoint(fMinMax[1], 1);
-	printf("fMax=%lf\n", fMinMax[1]);
+	OTF1->AddPoint(fMinMax[1], 1);*/
+	
 	volProperty->SetScalarOpacity(0, OTF1);
 
 	const int nCountItem_CTF = 4;
@@ -386,19 +399,22 @@ void CInteractorCB_DicomView::Add_Volume_Rendering_Data_To_Renderer(vtkImageData
 	for (int i = 0; i < nCountItem_CTF; i++)
 	{
 		fbase[i] = fMinMax[0] + fTerm * i * 0.25; //  25% 씩 증가.
+		printf("fabase[%d] = %lf\n", i, fbase[i]);
 	}
 
 	double col[nCountItem_CTF][3] =
 	{
-		{ 0.0, 0.0, 0.0 },{ 0.6, 0.4, 0.1 },
-		{ 0.6, 0.5, 0.3 },{ 1.0, 1.0, 1.0 }
+		{ 0.0, 0.0, 0.0 },
+		{ 0.3, 0.4, 0.1 },
+		{ 0.4, 0.6, 0.2 },
+		{ 1.0, 1.0, 1.0 }
 	};
 
 	// CTF 설정
 	C_VTK(vtkColorTransferFunction, CTF1);
-	for (int i = 0; i < nCountItem_CTF; i++)
+	for (int i = 0; i < nCountItem_CTF; i++) {
 		CTF1->AddRGBPoint(fbase[i], col[i][0], col[i][1], col[i][2]);
-
+	}
 	volProperty->SetColor(0, CTF1);
 	volume->SetProperty(volProperty);
 
@@ -482,7 +498,7 @@ void CInteractorCB_DicomView::SetLabelValue(vtkImageData* pLabelImage, int x, in
 {
 	if (nullptr == pLabelImage) return;
 	
-	if (x < 0 || x >= anDim[0]) return;
+	if (x < 0 || x >= anDim[0]) return; 
 	if (y < 0 || y >= anDim[1]) return;
 	if (z < 0 || z >= anDim[2]) return;
 		
